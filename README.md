@@ -1,5 +1,5 @@
 # INST377-Lab
 
-# Name (Please Input your name): Daniel Lanr
+# Name (Please Input your name): Daniel Lane
 
 # Comments: 
