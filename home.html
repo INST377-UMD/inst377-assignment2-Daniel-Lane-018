@@ -1,0 +1,74 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Assignment 2</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav>
+            <ul class="navbar">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="stocks.html">Stocks</a></li>
+                <li><a href="dogs.html">Dogs</a></li>
+            </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+        <h1>Home Page</h1>
+        
+        <div class="button-container">
+            <button class="custom-button" onclick="location.href='stocks.html'">Stocks</button>
+            <button class="custom-button" onclick="location.href='dogs.html'">Dogs</button>
+        </div>
+
+        <div id="quote-box" class="quote-box">Loading quote...</div>
+    </main>
+
+    <!-- Audio Instructions Div -->
+    <div class="audio-box">
+    <h3>Voice Commands</h3>
+        <p>Say: Hello</p>
+        <p>Say: Change the color to (color of choice)</p>
+        <p>Say: Navigate to home/stocks/dogs</p>
+        <button onclick="annyang.start()">Turn On Audio</button>
+        <button onclick="annyang.abort()">Turn Off Audio</button>
+    </div>
+
+    <script>
+    // Quote API
+    fetch('https://zenquotes.io/api/random')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('quote-box').textContent = `"${data[0].q}" — ${data[0].a}`;
+      })
+      .catch(err => {
+        document.getElementById('quote-box').textContent = "Couldn't load quote.";
+      });
+
+    // Annyang
+    if (annyang) {
+        const commands = {
+            'hello': () => alert('Hello World'),
+            'change the color to *color': (color) => {
+            document.body.style.backgroundColor = color.toLowerCase();
+            },
+            'navigate to *page': (page) => {
+            const pages = {
+                home: 'index.html',
+                stocks: 'stocks.html',
+                dogs: 'dogs.html'
+            };
+            const path = pages[page.toLowerCase()];
+            if (path) window.location.href = path;
+            }
+        };
+        annyang.addCommands(commands);
+        annyang.start();
+    }
+    </script>
+</body>
+</html>
