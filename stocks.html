@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Stocks</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav>
+    <ul class="navbar">
+      <li><a href="home.html">Home</a></li>
+      <li><a href="stocks.html">Stocks</a></li>
+      <li><a href="dogs.html">Dogs</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <h1>Stock Lookup</h1>
+
+    <div class="input-group">
+      <input type="text" id="tickerInput" placeholder="Enter Stock Ticker (e.g., AAPL)" />
+      <select id="rangeSelect">
+        <option value="30">30 Days</option>
+        <option value="60">60 Days</option>
+        <option value="90">90 Days</option>
+      </select>
+      <button class="custom-button" onclick="fetchStock()">Get Stock Data</button>
+    </div>
+
+    <canvas id="stockChart" width="600" height="300"></canvas>
+
+    <h2>Top 5 Most Talked About Stocks on Reddit</h2>
+    <div id="redditStocks"></div>
+  </main>
+
+  <!-- Audio Instructions -->
+  <div class="audio-box">
+    <h3>Voice Commands</h3>
+    <p>Say: Hello</p>
+    <p>Say: Change the color to (Color of choice)</p>
+    <p>Say: Navigate to home/stocks/dogs</p>
+    <p>Say: Lookup "Company"</p>
+    <button onclick="startVoice()">Turn On Audio</button>
+    <button onclick="stopVoice()">Turn Off Audio</button>    
+  </div>
+
+<script>
+  const API_KEY = 'oE3pPt8qsUD2EPhPp64LcpcqPjlZjRut';
+
+  function fetchStock(ticker = null) {
+    const symbol = ticker || document.getElementById('tickerInput').value.toUpperCase();
+    const days = parseInt(document.getElementById('rangeSelect').value);
+    const endDate = new Date().toISOString().split('T')[0];
+
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+    const formattedStart = startDate.toISOString().split('T')[0];
+
+    const url = `https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/day/${formattedStart}/${endDate}?adjusted=true&sort=asc&limit=${days}&apiKey=${API_KEY}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.results) throw new Error("Invalid ticker");
+        const labels = data.results.map(d => new Date(d.t).toLocaleDateString());
+        const prices = data.results.map(d => d.c);
+
+        drawChart(symbol, labels, prices);
+      })
+      .catch(err => {
+        alert("Error fetching stock data.");
+      });
+  }
+
+  function drawChart(symbol, labels, prices) {
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    if (window.myChart) window.myChart.destroy();
+
+    window.myChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: `${symbol} Closing Prices`,
+          data: prices,
+          borderColor: 'blue',
+          fill: false,
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+  }
+
+  async function loadTopRedditStocks() {
+    const response = await fetch('https://tradestie.com/api/v1/apps/reddit?date=2022-04-03');
+    const data = await response.json();
+    const topFive = data.slice(0, 5);
+
+    const table = document.createElement('table');
+    table.className = 'stock-table';
+    table.style.width = '80%';
+    table.style.margin = '20px auto';
+    table.style.borderCollapse = 'collapse';
+    table.style.textAlign = 'center';
+
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+      <tr style="background-color:#f2f2f2;">
+        <th style="padding: 10px; border: 1px solid #ddd;">Ticker</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Comment Count</th>
+        <th style="padding: 10px; border: 1px solid #ddd;">Sentiment</th>
+      </tr>
+    `;
+    table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    topFive.forEach(stock => {
+      const row = document.createElement('tr');
+
+      const tickerCell = document.createElement('td');
+      const link = document.createElement('a');
+      link.href = `https://finance.yahoo.com/quote/${stock.ticker}`;
+      link.target = '_blank';
+      link.textContent = stock.ticker;
+      link.style.color = '#2196F3';
+      tickerCell.appendChild(link);
+      tickerCell.style.border = '1px solid #ddd';
+      tickerCell.style.padding = '8px';
+
+      const commentCell = document.createElement('td');
+      commentCell.textContent = stock.no_of_comments;
+      commentCell.style.border = '1px solid #ddd';
+      commentCell.style.padding = '8px';
+
+      const sentimentCell = document.createElement('td');
+      sentimentCell.style.border = '1px solid #ddd';
+      sentimentCell.style.padding = '8px';
+      sentimentCell.textContent = stock.sentiment === 'Bullish' ? '📈 Bullish' : '📉 Bearish';
+
+      row.appendChild(tickerCell);
+      row.appendChild(commentCell);
+      row.appendChild(sentimentCell);
+      tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+
+    const container = document.getElementById('redditStocks');
+    container.innerHTML = '';
+    container.appendChild(table);
+  }
+
+  // Voice Commands setup
+  if (annyang) {
+    const commands = {
+      'hello': () => alert('Hello World'),
+      'change the color to *color': (color) => {
+        document.body.style.backgroundColor = color.toLowerCase();
+      },
+      'navigate to *page': (page) => {
+        const pages = {
+          home: 'home.html',
+          stocks: 'stocks.html',
+          dogs: 'dogs.html'
+        };
+        const path = pages[page.toLowerCase()];
+        if (path) window.location.href = path;
+      },
+      'lookup *stock': (stock) => {
+        const stockMap = {
+          microsoft: 'MSFT',
+          apple: 'AAPL',
+          google: 'GOOGL',
+          tesla: 'TSLA',
+          amazon: 'AMZN'
+        };
+        const ticker = stockMap[stock.toLowerCase()] || stock.toUpperCase();
+        document.getElementById('tickerInput').value = ticker;
+        document.getElementById('rangeSelect').value = "30";
+        fetchStock(ticker);
+      }
+    };
+
+    annyang.addCommands(commands);
+  }
+
+  function startVoice() {
+    if (annyang) {
+      annyang.start({ autoRestart: true, continuous: true });
+    }
+  }
+
+  function stopVoice() {
+    if (annyang) {
+      annyang.abort();
+    }
+  }
+
+  loadTopRedditStocks();
+</script>
+
+</body>
+</html>
