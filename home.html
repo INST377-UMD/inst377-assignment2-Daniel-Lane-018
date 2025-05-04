@@ -7,7 +7,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
 </head>
 <body>
-    <!-- Navigation Bar -->
+    // Navigation Bar
     <nav>
             <ul class="navbar">
                 <li><a href="home.html">Home</a></li>
@@ -16,19 +16,17 @@
             </ul>
     </nav>
 
-  <!-- Main Content -->
+  // Main Content
   <main>
     <h1>Home Page</h1>
-    
     <div class="button-container">
       <button class="custom-button" onclick="location.href='stocks.html'">Stocks</button>
       <button class="custom-button" onclick="location.href='dogs.html'">Dogs</button>
     </div>
-
     <div id="quote-box" class="quote-box">Loading quote...</div>
   </main>
 
-  <!-- Audio Instructions Div -->
+  // Audio Instructions Div
   <div class="audio-box">
     <h3>Voice Commands</h3>
     <p>Say: Hello</p>
@@ -37,9 +35,8 @@
     <button onclick="resumeAudio()">Turn On Audio</button>
     <button onclick="pauseAudio()">Turn Off Audio</button>    
   </div>
-
-  <!-- JavaScript -->
   <script>
+    
     // Quote API fetch
     fetch('https://cors-anywhere.herokuapp.com/https://zenquotes.io/api/random', {
       headers: {
@@ -53,7 +50,6 @@
       .catch(err => {
         document.getElementById('quote-box').textContent = "Couldn't load quote.";
       });
-
 
     // Voice Commands
     if (annyang) {
@@ -72,21 +68,18 @@
             if (path) window.location.href = path;
         }
         };
-
-        annyang.addCommands(commands);
-    }
-
-    function resumeAudio() {
-        if (annyang) {
-        annyang.start({ autoRestart: true, continuous: true });
-        }
-    }
-
-    function pauseAudio() {
-        if (annyang) annyang.abort();
-    }
-
-
+            annyang.addCommands(commands);
+      }
+  
+      function resumeAudio() {
+          if (annyang) {
+          annyang.start({ autoRestart: true, continuous: true });
+          }
+      }
+  
+      function pauseAudio() {
+          if (annyang) annyang.abort();
+      }
   </script>
 </body>
 </html>
