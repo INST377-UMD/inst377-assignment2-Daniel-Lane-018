@@ -8,29 +8,26 @@
   <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 </head>
 <body>
-  <!-- Navigation -->
+  // Navigation
   <ul class="navbar">
     <li><a href="home.html">Home</a></li>
     <li><a href="stocks.html">Stocks</a></li>
     <li><a href="dogs.html">Dogs</a></li>
   </ul>
-
   <h1>Random Dogs</h1>
 
-  <!-- Swiper Carousel -->
+  // Swiper Carousel
   <div class="swiper mySwiper">
     <div class="swiper-wrapper" id="dogCarousel"></div>
-    <!-- Navigation Arrows -->
+    // Navigation Arrows
     <div class="swiper-button-prev"></div>
     <div class="swiper-button-next"></div>
   </div>
-
   <h2>Dog Breeds</h2>
   <div class="button-container" id="breedButtons"></div>
-
   <div id="breedInfo" class="breed-info" style="display:none;"></div>
 
-  <!-- Audio Controls -->
+  // Audio Controls
   <div class="audio-box">
     <h3>Audio Commands</h3>
     <p>Say: Hello</p>
@@ -40,7 +37,6 @@
     <button onclick="resumeAudio()">Turn On Audio</button>
     <button onclick="pauseAudio()">Turn Off Audio</button>
   </div>
-
   <script>
     async function loadDogImages() {
       const res = await fetch('https://api.thedogapi.com/v1/images/search?limit=10');
@@ -71,15 +67,13 @@
     }
 
     async function loadRandomDogBreeds() {
-      const res = await fetch('https://api.thedogapi.com/v1/breeds');
-      const breeds = await res.json();
-      const shuffled = breeds.sort(() => 0.5 - Math.random());
-      const selected = shuffled.slice(0, 10);
-
-      const container = document.getElementById('breedButtons');
-      container.innerHTML = '';
-
-      selected.forEach(breed => {
+        const res = await fetch('https://api.thedogapi.com/v1/breeds');
+        const breeds = await res.json();
+        const shuffled = breeds.sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 10);
+        const container = document.getElementById('breedButtons');
+        container.innerHTML = '';
+        selected.forEach(breed => {
         const btn = document.createElement('button');
         btn.textContent = breed.name;
         btn.className = 'custom-button breed-button';
@@ -88,7 +82,6 @@
         container.appendChild(btn);
       });
     }
-
     function showBreedInfo(breed) {
       const info = document.getElementById('breedInfo');
       info.innerHTML = `
@@ -127,22 +120,18 @@
               matched = true;
             }
           });
-
           if (!matched) {
             alert(`No matching breed found for "${breed}"`);
           }
         }
       };
-
       annyang.addCommands(commands);
     }
-
     function resumeAudio() {
       if (annyang) {
         annyang.start({ autoRestart: true, continuous: true });
       }
     }
-
     function pauseAudio() {
       if (annyang) {
         annyang.abort();
