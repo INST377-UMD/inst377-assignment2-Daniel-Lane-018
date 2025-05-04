@@ -1,0 +1,212 @@
+    /* General / Home */
+    /* General Reset */
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Body Styling */
+    body {
+        background-color: #f0f8ff;
+        color: #333;
+        line-height: 1.6;
+        padding: 20px;
+    }
+
+    /* Navigation Bar */
+    .navbar {
+        display: flex;
+        justify-content: center;
+        background-color: #333;
+        padding: 10px 0;
+        list-style: none;
+    }
+
+    .navbar li {
+        margin: 0 15px;
+    }
+
+    .navbar li a {
+        color: white;
+        text-decoration: none;
+        padding: 10px 15px;
+        transition: background-color 0.3s ease;
+    }
+
+    .navbar li a:hover {
+        background-color: #555;
+        border-radius: 5px;
+    }
+
+    /* Headings */
+    h1, h2, h3 {
+        text-align: center;
+        margin: 20px 0;
+    }
+
+    /* Buttons */
+    .custom-button {
+        padding: 10px 20px;
+        margin: 10px;
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .custom-button:hover {
+        background-color: #45a049;
+    }
+
+    .button-container {
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .quote-box {
+        font-size: 1.2rem;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #f3f3f3;
+        border-left: 5px solid #5596eb;
+        border-right: 5px solid #5596eb;
+        width: 60%;
+        text-align: center;
+        font-style: italic;
+    }
+
+    .audio-box {
+        background-color: #e8f4fd;
+        padding: 20px;
+        margin-top: 50px;
+        border-top: 3px solid #ccc;
+        text-align: center;
+    }
+
+    .audio-box h3 {
+        margin-bottom: 10px;
+    }
+
+    .audio-box p {
+        margin: 5px 0;
+    }
+
+    .audio-box button {
+        margin: 10px 5px;
+        padding: 8px 16px;
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .audio-box button:hover {
+        background-color: #0b7dda;
+    }
+
+    /* Stocks */
+    .stock-table {
+        width: 80%;
+        margin: 0 auto 30px auto;
+        border-collapse: collapse;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+    }
+
+    .stock-table th,
+    .stock-table td {
+        padding: 12px 15px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    .stock-table th {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .stock-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .stock-table a {
+        color: #0073e6;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .stock-table a:hover {
+        text-decoration: underline;
+    }
+
+    .stock-form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+      /* Dogs */
+    .breed-info {
+        background: #f9f9f9;
+        padding: 20px;
+        width: 60%;
+        margin: 30px auto;
+        border-radius: 10px;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+        text-align: left;
+    }
+
+    @media (max-width: 600px) {
+    .slider-container, .breed-info {
+        width: 95%;
+    }
+
+    .dog-slide-img {
+        width: 100%;
+        height: auto;
+    }
+
+    .custom-button {
+        width: 90%;
+        margin: 10px auto;
+        display: block;
+    }
+    }
+
+    .swiper {
+        width: 50%;
+        max-width: 600px;
+        height: 350px;
+        margin: 20px auto;
+        position: relative;
+    }
+    
+    .dog-slide-img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+    }
+    
+    .swiper-button-prev,
+    .swiper-button-next {
+        color: black;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    
+    .swiper-button-prev {
+        left: -40px;
+    }
+    
+    .swiper-button-next {
+        right: -40px;
+    }
+    

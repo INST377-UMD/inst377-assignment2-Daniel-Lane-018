@@ -1,0 +1,146 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dogs</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/annyang/2.6.1/annyang.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+</head>
+<body>
+  // Navigation
+  <ul class="navbar">
+    <li><a href="home.html">Home</a></li>
+    <li><a href="stocks.html">Stocks</a></li>
+    <li><a href="dogs.html">Dogs</a></li>
+  </ul>
+  <h1>Random Dogs</h1>
+
+  // Swiper Carousel
+  <div class="swiper mySwiper">
+    <div class="swiper-wrapper" id="dogCarousel"></div>
+    // Navigation Arrows
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+  <h2>Dog Breeds</h2>
+  <div class="button-container" id="breedButtons"></div>
+  <div id="breedInfo" class="breed-info" style="display:none;"></div>
+
+  // Audio Controls
+  <div class="audio-box">
+    <h3>Audio Commands</h3>
+    <p>Say: Hello</p>
+    <p>Say: Change the color to (Color of choice)</p>
+    <p>Say: Navigate to home/stocks/dogs</p>
+    <p>Say: Load Dog Breed bulldog/pug/etc</p>
+    <button onclick="resumeAudio()">Turn On Audio</button>
+    <button onclick="pauseAudio()">Turn Off Audio</button>
+  </div>
+  <script>
+    async function loadDogImages() {
+      const res = await fetch('https://api.thedogapi.com/v1/images/search?limit=10');
+      const images = await res.json();
+      const carousel = document.getElementById('dogCarousel');
+      carousel.innerHTML = '';
+
+      images.forEach(img => {
+        const slide = document.createElement('div');
+        slide.className = 'swiper-slide';
+
+        const image = document.createElement('img');
+        image.src = img.url;
+        image.alt = "Dog";
+        image.className = 'dog-slide-img';
+
+        slide.appendChild(image);
+        carousel.appendChild(slide);
+      });
+
+      new Swiper('.mySwiper', {
+        loop: true,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        }
+      });
+    }
+
+    async function loadRandomDogBreeds() {
+        const res = await fetch('https://api.thedogapi.com/v1/breeds');
+        const breeds = await res.json();
+        const shuffled = breeds.sort(() => 0.5 - Math.random());
+        const selected = shuffled.slice(0, 10);
+        const container = document.getElementById('breedButtons');
+        container.innerHTML = '';
+        selected.forEach(breed => {
+        const btn = document.createElement('button');
+        btn.textContent = breed.name;
+        btn.className = 'custom-button breed-button';
+        btn.onclick = () => showBreedInfo(breed);
+        btn.setAttribute('data-name', breed.name.toLowerCase());
+        container.appendChild(btn);
+      });
+    }
+    function showBreedInfo(breed) {
+      const info = document.getElementById('breedInfo');
+      info.innerHTML = `
+        <h3>${breed.name}</h3>
+        <p><strong>Description:</strong> ${breed.description && breed.description.trim() !== '' ? breed.description : 'No breed description available.'}</p>
+        <p><strong>Life Span:</strong> ${breed.life_span}</p>
+      `;
+      info.style.display = 'block';
+    }
+
+    // Voice Commands
+    if (annyang) {
+      const commands = {
+        'hello': () => alert('Hello World'),
+        'change the color to *color': (color) => {
+          document.body.style.backgroundColor = color.toLowerCase();
+        },
+        'navigate to *page': (page) => {
+          const pages = {
+            home: 'index.html',
+            stocks: 'stocks.html',
+            dogs: 'dogs.html'
+          };
+          const path = pages[page.toLowerCase()];
+          if (path) window.location.href = path;
+        },
+        'load dog breed *breed': (breed) => {
+          const spokenBreed = breed.toLowerCase().trim();
+          const buttons = document.querySelectorAll('.breed-button');
+
+          let matched = false;
+          buttons.forEach(btn => {
+            const btnText = btn.textContent.toLowerCase().trim();
+            if (btnText.includes(spokenBreed) || spokenBreed.includes(btnText)) {
+              btn.click();
+              matched = true;
+            }
+          });
+          if (!matched) {
+            alert(`No matching breed found for "${breed}"`);
+          }
+        }
+      };
+      annyang.addCommands(commands);
+    }
+    function resumeAudio() {
+      if (annyang) {
+        annyang.start({ autoRestart: true, continuous: true });
+      }
+    }
+    function pauseAudio() {
+      if (annyang) {
+        annyang.abort();
+      }
+    }
+
+    // Load content
+    loadDogImages();
+    loadRandomDogBreeds();
+  </script>
+</body>
+</html>
